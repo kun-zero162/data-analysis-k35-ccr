@@ -1,94 +1,87 @@
-# CCR.GB: Compositional Causal Reasoning Evaluation in Language Models (paper reproducing repository)
+# CCR.GB: Đánh giá Lý luận Nhân quả Thành phần trong các Mô hình Ngôn ngữ
 
-This repository contains the codebase for the paper *Compositional Causal Reasoning Evaluation in Language Models* ([ICML 2025](https://arxiv.org/abs/2503.04556)). The CCR.GB benchmark is designed to evaluate LLMs on compositional causal reasoning across all three levels of Pearl's Causal Hierarchy: (1) association, (2) intervention, and (3) counterfactuals.
+Kho lưu trữ này chứa mã nguồn cho bài báo *Compositional Causal Reasoning Evaluation in Language Models* ([ICML 2025](https://arxiv.org/abs/2503.04556)). Bộ kiểm thử CCR.GB được thiết kế để đánh giá LLM về khả năng lý luận nhân quả thành phần (compositional causal reasoning) trên cả ba cấp độ trong Hệ thống phân cấp nhân quả của Pearl: (1) liên tưởng (association), (2) can thiệp (intervention), và (3) phản thực tế (counterfactuals).
 
-For a comprehensive overview of the research, visit the [main project page](https://jmaasch.github.io/ccr/).
-
-Group's members information:
-
-* 25C11039 - To Tan Hiep
-
-* 25C11028 - Nguyen Hoang Viet
+Để có cái nhìn toàn diện về nghiên cứu này, vui lòng truy cập [trang dự án chính](https://jmaasch.github.io/ccr/).
 
 ---
 
-## Repository Walkthrough & Notebooks
+## Tổng quan mã nguồn & Các Notebook
 
-We have implemented two main notebooks in the root of the project to demonstrate, verify, and reproduce the paper's findings:
+Chúng tôi đã triển khai hai notebook chính trong thư mục gốc của dự án để trình bày, xác minh và tái hiện các phát hiện của bài báo:
 
-1.  **[experimental_results.ipynb]:** 
-    *   **Objective:** Reproduces and visualizes the key experimental results from **Section 6** of the paper.
-    *   **Features:** Dynamically computes the ground truth values and simulates LLM response profiles (for models such as `o1`, `GPT-4o + CoT`, and `Llama 3`) based on the empirical statistics reported in the study.
-    *   **Reproduced Outputs:** Recreates the Validity vs. Consistency scatter plot (**Figure 10**), the Commutative Cut Tree (CCT) reasoning profiles (**Figure 11**), and the error scaling over path length (**Figure 12**).
-2.  **[verification.ipynb]:**
-    *   **Objective:** Executes the step-by-step structural verification of the CCR evaluation pipeline.
-    *   **Features:** Constructs the causal DAG, generates prompt contexts (factual and counterfactual), calculates the exact ground truth PNS values via Structural Causal Model (SCM) simulation ($n = 100,000$), and performs the verification of Theorem 5.1.
+1.  **[experimental_results.ipynb](file:///D:/FIT@HCMUS/Master/DA/seminar/compositional_causal_reasoning/experimental_results.ipynb):** 
+    *   **Mục tiêu:** Tái hiện và trực quan hóa các kết quả thực nghiệm chính từ **Mục 6** của bài báo.
+    *   **Tính năng:** Tính toán động các giá trị ground truth và mô phỏng hồ sơ lý luận của các LLM (đối với các mô hình như `o1`, `GPT-4o + CoT`, và `Llama 3`) dựa trên các số liệu thống kê thực nghiệm được báo cáo trong nghiên cứu.
+    *   **Kết quả trực quan hóa:** Tái tạo biểu đồ phân tán giữa Tính kiểm chứng ngoài và Tính nhất quán trong (**Figure 10**), hồ sơ lý luận trên Cây Lát Cắt Giao Hoán (CCT) (**Figure 11**), và mức độ tăng trưởng sai số theo độ dài đường đi nhân quả (**Figure 12**).
+2.  **[verification.ipynb](file:///D:/FIT@HCMUS/Master/DA/seminar/compositional_causal_reasoning/verification.ipynb):**
+    *   **Mục tiêu:** Thực hiện xác minh cấu trúc từng bước của quy trình đánh giá CCR.
+    *   **Tính năng:** Xây dựng DAG nhân quả, tạo ngữ cảnh truy vấn (thực tế và phản thực tế), tính toán giá trị PNS ground truth chính xác thông qua mô phỏng Mô hình nhân quả cấu trúc (SCM) ($n = 100,000$), và thực hiện xác minh Định lý 5.1.
 
 ---
 
-## Detailed Analysis of `verification.ipynb` Results
+## Phân tích chi tiết kết quả của `verification.ipynb`
 
-Below is a rigorous analysis of the execution results from [verification.ipynb] under the seed configuration (`np.random.seed(0)` and `random.seed(0)`).
+Dưới đây là phân tích chặt chẽ các kết quả thực thi từ [verification.ipynb](file:///D:/FIT@HCMUS/Master/DA/seminar/compositional_causal_reasoning/verification.ipynb) dưới cấu hình seed cố định (`np.random.seed(0)` và `random.seed(0)`).
 
-### 1. Causal Graph & Node Identification
-For a three-BCC graph configured with `n_per_bcc = [4, 3, 3]` and cycle types, the task generator constructs a Directed Acyclic Graph (DAG) with **8 nodes** and **2 cutpoints** (articulation points). The dynamically assigned node labels (randomly drawn from female names via `Faker`) are:
-*   **Root ($X$):** `Nereida`
-*   **Cutpoint 1 ($C$):** `Julia`
-*   **Cutpoint 2 ($D$):** `Celie`
-*   **Leaf ($Y$):** `Tristan`
+### 1. Đồ thị nhân quả & Xác định nút
+Đối với đồ thị gồm 3 thành phần song liên thông (BCC) được cấu hình với `n_per_bcc = [4, 3, 3]` và thuộc kiểu vòng (cycle), bộ sinh nhiệm vụ xây dựng một Đồ thị có hướng không chu trình (DAG) gồm **8 nút** và **2 điểm cắt** (cutpoints / khớp). Các nhãn nút được gán động (lấy ngẫu nhiên từ danh sách tên nữ qua thư viện `Faker`) là:
+*   **Gốc ($X$):** `Nereida`
+*   **Điểm cắt 1 ($C$):** `Julia`
+*   **Điểm cắt 2 ($D$):** `Celie`
+*   **Lá ($Y$):** `Tristan`
 
-The resulting Commutative Cut Tree (CCT) path sequence is:
+Chuỗi đường đi trên Cây Lát Cắt Giao Hoán (CCT) kết quả là:
 $$X (\text{Nereida}) \to C (\text{Julia}) \to D (\text{Celie}) \to Y (\text{Tristan})$$
 
-### 2. Ground Truth PNS Values
-Using $100,000$ SCM simulation samples, we estimated the Probability of Necessity and Sufficiency (PNS) for all cause-effect pairs in the CCT:
-*   **Global PNS ($PNS_{XY}$):** $0.000390$
-*   **Local PNS ($PNS_{XC}$):** $0.048060$
-*   **Local PNS ($PNS_{CY}$):** $0.009670$
-*   **Local PNS ($PNS_{XD}$):** $0.005730$
-*   **Local PNS ($PNS_{DY}$):** $0.081460$
-*   **Local PNS ($PNS_{CD}$):** $0.121130$
+### 2. Các giá trị PNS Ground Truth
+Sử dụng $100,000$ mẫu mô phỏng SCM, chúng tôi đã ước lượng Xác suất của Tính cần thiết và Tính đủ (PNS) cho tất cả các cặp nguyên nhân - kết quả trong CCT:
+*   **PNS toàn cục ($PNS_{XY}$):** $0.000390$
+*   **PNS cục bộ ($PNS_{XC}$):** $0.048060$
+*   **PNS cục bộ ($PNS_{CY}$):** $0.009670$
+*   **PNS cục bộ ($PNS_{XD}$):** $0.005730$
+*   **PNS cục bộ ($PNS_{DY}$):** $0.081460$
+*   **PNS cục bộ ($PNS_{CD}$):** $0.121130$
 
-**Key Observation:** The global PNS ($0.000390$) is exceptionally small. Because all causal functions are logical `or` and nodes are connected in series, the counterfactual probability of the leaf changing state in response to the root decays rapidly across multiple layers of mediating variables. The local effects are substantially larger (e.g., $PNS_{CD} \approx 12\%$), demonstrating that causal influence is highly localized.
+**Quan sát chính:** Giá trị PNS toàn cục ($0.000390$) cực kỳ nhỏ. Bởi vì tất cả các hàm nhân quả đều là toán tử logic `or` và các nút được kết nối nối tiếp, xác suất phản thực tế của nút lá thay đổi trạng thái theo nút gốc bị suy giảm nhanh chóng qua nhiều lớp biến trung gian. Các tác động cục bộ lớn hơn đáng kể (ví dụ: $PNS_{CD} \approx 12\%$), chứng minh rằng ảnh hưởng nhân quả có tính chất khu vực hóa mạnh mẽ.
 
-### 3. Theorem 5.1 Verification & Monte Carlo Error
-Theorem 5.1 states that for serial cutpoint structures, the global PNS equals the product of local PNS values along any CCT path. The notebook verified this theorem across three compositions:
-*   **Composition 1 ($PNS_{XC} \times PNS_{CY}$):** $0.000465$ (Relative Absolute Error, **RAE: 19.16%**)
-*   **Composition 2 ($PNS_{XD} \times PNS_{DY}$):** $0.000467$ (Relative Absolute Error, **RAE: 19.68%**)
-*   **Composition 3 ($PNS_{XC} \times PNS_{CD} \times PNS_{DY}$):** $0.000474$ (Relative Absolute Error, **RAE: 21.59%**)
+### 3. Xác minh Định lý 5.1 & Sai số Monte Carlo
+Định lý 5.1 phát biểu rằng đối với các cấu trúc điểm cắt nối tiếp, PNS toàn cục bằng tích của các giá trị PNS cục bộ dọc theo bất kỳ đường đi nào trong CCT. Notebook đã xác minh định lý này trên ba phép tích thành phần:
+*   **Tích thành phần 1 ($PNS_{XC} \times PNS_{CY}$):** $0.000465$ (Sai số tuyệt đối tương đối, **RAE: 19.16%**)
+*   **Tích thành phần 2 ($PNS_{XD} \times PNS_{DY}$):** $0.000467$ (Sai số tuyệt đối tương đối, **RAE: 19.68%**)
+*   **Tích thành phần 3 ($PNS_{XC} \times PNS_{CD} \times PNS_{DY}$):** $0.000474$ (Sai số tuyệt đối tương đối, **RAE: 21.59%**)
 
-#### **Why do all three compositions deviate from the global PNS by 19%–22%?**
-1.  **Finite-Sample Sampling Variance:** This deviation is a finite-sample Monte Carlo sampling artifact, not a violation of Theorem 5.1.
-2.  **Small Global Probability Sensitivity:** The true global probability $PNS_{XY} = 0.000390$ translates to observing only $\approx 39$ joint events out of $100,000$ samples. The expected standard error of this estimation is $\sqrt{39}/100,000 \approx 0.000062$, giving a high coefficient of variation (relative standard error) of $\approx 16\%$.
-3.  **Cumulative Product Variance:** Compositions multiply two or three independent estimates. Since each local PNS has its own sampling variance, multiplying them compounds their relative error.
-4.  **Directional Bias:** At finite $n$, multiplying positive, independently perturbed small probabilities leads to a systematic upward bias, explaining why all three compositions overestimate the true global PNS.
+#### **Tại sao cả ba tích thành phần đều lệch so với PNS toàn cục khoảng 19%–22%?**
+1.  **Biến động lấy mẫu cỡ mẫu hữu hạn:** Độ lệch này là một sai số kỹ thuật của việc lấy mẫu Monte Carlo với cỡ mẫu hữu hạn, không phải là sự vi phạm Định lý 5.1.
+2.  **Độ nhạy của xác suất toàn cục nhỏ:** Xác suất toàn cục thực tế $PNS_{XY} = 0.000390$ tương đương với việc chỉ quan sát thấy $\approx 39$ sự kiện kết hợp trên tổng số $100,000$ mẫu. Sai số chuẩn kỳ vọng của ước lượng này là $\sqrt{39}/100,000 \approx 0.000062$, dẫn đến hệ số biến thiên (sai số chuẩn tương đối) rất cao, khoảng $\approx 16\%$.
+3.  **Tích lũy sai số của phép nhân:** Các tích thành phần nhân hai hoặc ba ước lượng độc lập với nhau. Vì mỗi PNS cục bộ đều có phương sai lấy mẫu riêng, việc nhân chúng lại sẽ làm trầm trọng thêm sai số tương đối.
+4.  **Xu hướng lệch hướng:** Ở cỡ mẫu hữu hạn $n$, việc nhân các xác suất nhỏ dương bị nhiễu độc lập dẫn đến một xu hướng lệch dương hệ thống (upward bias), giải thích tại sao cả ba phép tích thành phần đều ước lượng cao hơn giá trị PNS toàn cục thực tế.
 
-### 4. Cross-Theme Structural Consistency
-*   **Theme Equivalence:** The notebook verified that `FluVaccine` and `FlowerGarden` DAGs match `CandyParty` structurally (`True`). This confirms that the benchmark isolates reasoning ability from semantic context: the causal graphs, SCMs, and math-logical parent-child relationships remain identical; only the verbal surface form changes.
-*   **ClinicalNotes Variant:** `ClinicalNotes` enforces logical `or` for all intermediate relations but fixes the final leaf-node function to `and` (representing that a recommendation for surgery requires all diagnostic conditions to be met).
-*   **CellBio Variant:** `CellBio` targets the Average Treatment Effect (ATE) instead of the PNS. It uses a fundamentally different linear SCM process with continuous variables and Gaussian noise, representing gene transcription volumes.
+### 4. Tính nhất quán cấu trúc đa chủ đề
+*   **Tính tương đương chủ đề:** Notebook đã xác minh rằng các đồ thị DAG của `FluVaccine` và `FlowerGarden` trùng khớp hoàn toàn về mặt cấu trúc với `CandyParty` (`True`). Điều này xác nhận rằng bộ kiểm thử cô lập được khả năng lý luận khỏi ngữ cảnh ngữ nghĩa: đồ thị nhân quả, SCM, và quan hệ cha-con logic-toán học vẫn giữ nguyên; chỉ có biểu hiện ngôn ngữ tự nhiên bên ngoài thay đổi.
+*   **Biến thể ClinicalNotes:** `ClinicalNotes` áp dụng toán tử logic `or` cho tất cả các mối quan hệ trung gian nhưng cố định hàm của nút lá cuối cùng là `and` (thể hiện rằng một khuyến nghị phẫu thuật yêu cầu tất cả các điều kiện chẩn đoán trung gian phải được đáp ứng đồng thời).
+*   **Biến thể CellBio:** `CellBio` nhắm mục tiêu vào Tác động can thiệp trung bình (ATE) thay vì PNS. Nó sử dụng một quy trình SCM tuyến tính hoàn toàn khác biệt với các biến liên tục và nhiễu Gaussian, đại diện cho thể tích phiên mã của gen.
 
 ---
 
-## Setup & Running the Notebooks
+## Cấu hình & Cách chạy các Notebook
 
-Ensure that you have installed the required dependencies in the virtual environment.
+Đảm bảo rằng bạn đã cài đặt các thư viện phụ thuộc trong môi trường ảo.
 
-### 1. Activate the Environment
+### 1. Kích hoạt môi trường ảo
 ```powershell
-# On Windows PowerShell:
+# Trên Windows PowerShell:
 .venv\Scripts\activate
 ```
-or activate your own enviroment if using others.
 
-### 2. Install Dependencies
+### 2. Cài đặt các thư viện phụ thuộc
 ```bash
 pip install -r requirements.txt
 ```
-*(Make sure `pandas`, `numpy`, `networkx`, and `matplotlib` are installed.)*
+*(Hãy đảm bảo `pandas`, `numpy`, `networkx`, và `matplotlib` đã được cài đặt.)*
 
-### 3. Launch Jupyter
+### 3. Khởi chạy Jupyter
 ```bash
 jupyter notebook
 ```
-Open **[experimental_results.ipynb]** or **[verification.ipynb]** to inspect the results. Since the notebooks are pre-executed, you can view the rendered plots and tables immediately upon opening.
+Mở **[experimental_results.ipynb](file:///D:/FIT@HCMUS/Master/DA/seminar/compositional_causal_reasoning/experimental_results.ipynb)** hoặc **[verification.ipynb](file:///D:/FIT@HCMUS/Master/DA/seminar/compositional_causal_reasoning/verification.ipynb)** để kiểm tra kết quả. Vì các notebook đã được thực thi sẵn, bạn có thể xem ngay các biểu đồ và bảng biểu kết quả ngay khi mở file.
