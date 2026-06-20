@@ -14,10 +14,10 @@ Thành viên thực hiện:
 
 ## Tổng quan mã nguồn & Các Notebook
 
-Chúng tôi đã triển khai hai notebook chính trong thư mục gốc của dự án để trình bày, xác minh và tái hiện các phát hiện của bài báo:
+Chúng tôi đã triển khai thêm hai notebook chưa tồn tại trong repository gốc của dự án để có thể tập trung trình bày, xác minh và tái hiện các phát hiện của bài báo:
 
 1.  **[experimental_results.ipynb]:** 
-    *   **Mục tiêu:** Tái hiện và trực quan hóa các kết quả thực nghiệm chính từ **Mục 6** của bài báo.
+    *   **Mục tiêu:** Tái hiện và trực quan hóa các kết quả thực nghiệm chính từ **Mục 6** của bài báo (trên ví dụ `CandyParty`).
     *   **Tính năng:** Tính toán động các giá trị ground truth và mô phỏng hồ sơ lý luận của các LLM (đối với các mô hình như `o1`, `GPT-4o + CoT`, và `Llama 3`) dựa trên các số liệu thống kê thực nghiệm được báo cáo trong nghiên cứu.
     *   **Kết quả trực quan hóa:** Tái tạo biểu đồ phân tán giữa Tính kiểm chứng ngoài và Tính nhất quán trong (**Figure 10**), hồ sơ lý luận trên Cây Lát Cắt Giao Hoán (CCT) (**Figure 11**), và mức độ tăng trưởng sai số theo độ dài đường đi nhân quả (**Figure 12**).
 2.  **[verification.ipynb]:**
